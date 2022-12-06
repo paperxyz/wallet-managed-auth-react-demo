@@ -1,17 +1,23 @@
-import "./App.css";
-import { useCallback, useEffect, useState } from "react";
-import { AuthProvider, PaperClient } from "@paperxyz/embedded-wallet-sdk";
+import {
+  AuthProvider,
+  ContractCallInputType,
+  GetUserStatusType,
+  InitializedUser,
+  PaperEmbeddedWalletSdk,
+  UserStatus,
+} from "@paperxyz/embedded-wallet-sdk";
 import { ethers } from "ethers";
+import { useCallback, useEffect, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [paper, setPaper] = useState<PaperClient>();
-  const [userStatus, setUserStatus] = useState<any>();
-  const [user, setUser] = useState<any>();
-  const [userWithWallet, setUserWithWallet] = useState<any>();
+  const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
+  const [userDetails, setUserDetails] = useState<GetUserStatusType>();
+  const [user, setUser] = useState<InitializedUser>();
   const [emailAddress, setEmailAddress] = useState<string>();
 
   useEffect(() => {
-    const paper = new PaperClient({
+    const paper = new PaperEmbeddedWalletSdk({
       clientId: "be9256b7-9e2b-405b-a1fa-a510275ff902",
       chain: "Polygon",
       // Optional: custom CSS styling properties:
@@ -29,14 +35,16 @@ function App() {
     if (!paper) {
       return;
     }
+    console.log("paper", paper);
 
     const paperUserStatus = await paper.getUserStatus();
-    setUserStatus(paperUserStatus);
-    setUser(await paper.auth.getDetails());
-
-    if (!paperUserStatus.wallet.isOnNewDevice) {
-      const paperUserWithWallet = await paper.getUser();
-      setUserWithWallet(paperUserWithWallet);
+    console.log("paperUserStatus", paperUserStatus);
+    setUserDetails(paperUserStatus);
+    switch (paperUserStatus.status) {
+      case UserStatus.LOGGED_IN_WALLET_INITIALIZED: {
+        const paperUserWithWallet = await paper.initializeUser();
+        setUser(paperUserWithWallet);
+      }
     }
   }, [paper]);
 
@@ -47,7 +55,7 @@ function App() {
   }, [paper, fetchUserStatus]);
 
   const loginWithEmail = async () => {
-    const result = await paper!.auth.loginWithOTP({
+    const result = await paper!.auth.loginWithOtp({
       email: emailAddress,
     });
     console.log(`loginWithEmail result: ${result}`);
@@ -57,7 +65,7 @@ function App() {
     if (!paper) {
       return;
     }
-    await paper.auth.loginWithSocialOAuth({
+    await paper.auth.initializeSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri: "http://localhost:3001",
     });
@@ -67,7 +75,7 @@ function App() {
     if (!paper) {
       return;
     }
-    const resp = await paper.auth.loginWithSocialOAuthCallback({
+    const resp = await paper.auth.loginWithSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri: "http://localhost:3001",
     });
@@ -75,24 +83,19 @@ function App() {
   };
 
   const activateWallet = async () => {
-    const response = await paper!.getUser();
+    const response = await paper!.initializeUser();
     console.log("response from activateWallet", response);
   };
 
-  const getAuthDetails = async () => {
-    const response = await paper!.auth.getDetails();
-    console.log("response from getAuthDetails", response);
-  };
-
   const getAddress = async () => {
-    const wallet = userWithWallet.wallet;
-    const signer = await wallet?.getEtherJsSigner();
+    const wallet = user?.wallet;
+    const signer = await wallet?.getEthersJsSigner();
     const address = await signer?.getAddress();
     console.log("address", address);
   };
   const signMessage = async () => {
-    const wallet = userWithWallet.wallet;
-    const signer = await wallet?.getEtherJsSigner({
+    const wallet = user?.wallet;
+    const signer = await wallet?.getEthersJsSigner({
       rpcEndpoint: "mainnet",
     });
     const signedMessage = await signer?.signMessage("hello world");
@@ -100,8 +103,8 @@ function App() {
   };
 
   const signTransactionEth = async () => {
-    const wallet = userWithWallet.wallet;
-    const signer = await wallet?.getEtherJsSigner({
+    const wallet = user?.wallet;
+    const signer = await wallet?.getEthersJsSigner({
       rpcEndpoint: "mainnet",
     });
     const tx = {
@@ -113,8 +116,8 @@ function App() {
   };
 
   const signTransactionGoerli = async () => {
-    const wallet = userWithWallet.wallet;
-    const signer = await wallet?.getEtherJsSigner({
+    const wallet = user?.wallet;
+    const signer = await wallet?.getEthersJsSigner({
       rpcEndpoint: "goerli",
     });
     const tx = {
@@ -128,14 +131,13 @@ function App() {
   const callContractGasless = async () => {
     const params = {
       contractAddress: "0xb2369209b4eb1e76a43fAd914B1d29f6508c8aae",
-      method: {
-        args: [userWithWallet?.walletAddress ?? "", 1, 0],
-        stub: "function claimTo(address _to, uint256 _tokeIt, uint256 _quantity) external" as const,
-      },
-    };
+      methodArgs: [user?.walletAddress ?? "", 1, 0],
+      methodInterface:
+        "function claimTo(address _to, uint256 _tokeIt, uint256 _quantity) external",
+    } as ContractCallInputType;
     console.log("params", params);
     try {
-      const result = await user?.writeTo.contract(params);
+      const result = await user?.wallet.writeTo.contract(params);
       console.log("transactionHash", result?.transactionHash);
     } catch (e) {
       console.error(`something went wrong sending gasless transaction ${e}`);
@@ -150,9 +152,9 @@ function App() {
   return (
     <div className="App">
       <h1>Wallets + Auth demo</h1>
-      {!userStatus ? (
+      {!userDetails ? (
         <>Loading...</>
-      ) : !userStatus.isLoggedIn ? (
+      ) : userDetails.status === UserStatus.LOGGED_OUT ? (
         <>
           <input
             type="text"
@@ -165,12 +167,13 @@ function App() {
           <br /> - OR - <br />
           <button onClick={loginWithGoogle}>Log in with Google</button>
         </>
-      ) : userStatus?.wallet.isOnNewDevice ? (
+      ) : userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
+        userDetails.status === UserStatus.LOGGED_IN_NEW_DEVICE ? (
         <>
           Successfully authenticated. Wallet not found on current device.
           <br />
           <br />
-          Authenticated email: {user?.email}
+          Authenticated email: {userDetails.data.authDetails.email}
           <br />
           <br />
           <button onClick={activateWallet}>
@@ -182,7 +185,7 @@ function App() {
           Successfully authenticated and wallet ready to use on this device.
           <br />
           <br />
-          Authenticated email: {user?.email}
+          Authenticated email: {userDetails.data.authDetails.email}
           <br />
           Wallet address:
           <br />
@@ -218,12 +221,6 @@ function App() {
             className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
           >
             Call contract method (gasless)
-          </button>
-          <button
-            onClick={getAuthDetails}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            Get Auth Details
           </button>
           <button
             onClick={logout}
