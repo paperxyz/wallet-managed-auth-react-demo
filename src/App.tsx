@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
       clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
-      chain: "Polygon",
+      chain: "Mumbai",
       // Optional: custom CSS styling properties:
       styles: {
         colorBackground: "#202020",
@@ -137,8 +137,8 @@ function App() {
     } as ContractCallInputType;
     console.log("params", params);
     try {
-      // const result = await user?.wallet.writeTo.contract(params);
-      // console.log("transactionHash", result?.transactionHash);
+      const result = await user?.wallet.gasless.callContract(params);
+      console.log("transactionHash", result?.transactionHash);
     } catch (e) {
       console.error(`something went wrong sending gasless transaction ${e}`);
     }
