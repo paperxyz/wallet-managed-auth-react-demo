@@ -5,7 +5,7 @@ import {
   InitializedUser,
   PaperEmbeddedWalletSdk,
   UserStatus,
-} from "@paperxyz/embedded-wallet-sdk";
+} from "@paperxyz/embedded-wallet-service-sdk";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
