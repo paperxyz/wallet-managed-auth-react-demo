@@ -35,7 +35,6 @@ function App() {
     if (!paper) {
       return;
     }
-    console.log("paper", paper);
 
     const paperUserStatus = await paper.getUserStatus();
     console.log("paperUserStatus", paperUserStatus);
@@ -55,36 +54,33 @@ function App() {
   }, [paper, fetchUserStatus]);
 
   const loginWithEmail = async () => {
-    const result = await paper!.auth.loginWithOtp({
+    const result = await paper?.auth.loginWithOtp({
       email: emailAddress,
     });
     console.log(`loginWithEmail result: ${result}`);
+    await fetchUserStatus();
   };
 
   const loginWithGoogle = async () => {
-    if (!paper) {
-      return;
-    }
-    await paper.auth.initializeSocialOAuth({
+    await paper?.auth.initializeSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri: "http://localhost:3001",
     });
   };
 
   const googleCallback = async () => {
-    if (!paper) {
-      return;
-    }
-    const resp = await paper.auth.loginWithSocialOAuth({
+    const resp = await paper?.auth.loginWithSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri: "http://localhost:3001",
     });
     console.log("googleCallback response", resp);
+    await fetchUserStatus();
   };
 
   const activateWallet = async () => {
-    const response = await paper!.initializeUser();
+    const response = await paper?.initializeUser();
     console.log("response from activateWallet", response);
+    await fetchUserStatus();
   };
 
   const getAddress = async () => {
@@ -145,8 +141,9 @@ function App() {
   };
 
   const logout = async () => {
-    const response = await paper!.auth.logout();
+    const response = await paper?.auth.logout();
     console.log("logout response", response);
+    await fetchUserStatus();
   };
 
   return (
