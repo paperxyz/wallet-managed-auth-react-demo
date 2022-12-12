@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "be9256b7-9e2b-405b-a1fa-a510275ff902",
+      clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
       chain: "Polygon",
       // Optional: custom CSS styling properties:
       styles: {
