@@ -137,8 +137,8 @@ function App() {
     } as ContractCallInputType;
     console.log("params", params);
     try {
-      const result = await user?.wallet.writeTo.contract(params);
-      console.log("transactionHash", result?.transactionHash);
+      // const result = await user?.wallet.writeTo.contract(params);
+      // console.log("transactionHash", result?.transactionHash);
     } catch (e) {
       console.error(`something went wrong sending gasless transaction ${e}`);
     }
