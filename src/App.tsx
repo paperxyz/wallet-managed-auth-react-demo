@@ -67,7 +67,8 @@ function App() {
     }
     await paper.auth.initializeSocialOAuth({
       provider: AuthProvider.GOOGLE,
-      redirectUri: "http://localhost:3001",
+      redirectUri:
+        "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
     });
   };
 
@@ -77,7 +78,8 @@ function App() {
     }
     const resp = await paper.auth.loginWithSocialOAuth({
       provider: AuthProvider.GOOGLE,
-      redirectUri: "http://localhost:3001",
+      redirectUri:
+        "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
     });
     console.log("googleCallback response", resp);
   };
