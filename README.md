@@ -1,46 +1,16 @@
-# Getting Started with Create React App
+# Welcome to Paper's Embedded Wallet Service (EWS) Alpha Sample App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Note: This is private alpha. To get full access to this repository and product, you will need email Harpriya (harpriya@withpaper.com) for waitlist access.**
 
-## Available Scripts
+Feel free to play around with a live deployment of this sample app here: https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app
+Find the docs with more information here: https://ews.withpaper.com/docs
 
-In the project directory, you can run:
+To run this app locally, clone this repo, run `npm install`, and `npm start`
+The rendered page should look like the following image:
+<img width="351" alt="image" src="https://user-images.githubusercontent.com/26000274/207985092-74570c5d-3549-4619-bf4a-ceb0d20648a6.png">
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Logging in with email address is using `<LoginWithOTP>` and sends a unique 6-digit code from Paper to the email input. Upon verification, the user is then prompted to enter a security password and download a 24-word secret recovery phrase to reset the password in the event that the password is lost or forgotten. The user will be prompted to enter this password every time they log in using a new device.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+After the initial setup, the following page will be rendered. On this page, you can sign a message, sign a transaction, call the custom gasless contract method (which airdrops an NFT to the wallet), and log out of your wallet. 
+<img width="775" alt="image" src="https://user-images.githubusercontent.com/26000274/207985008-9ca906db-de3a-4005-875b-1de97bb0f8ed.png">

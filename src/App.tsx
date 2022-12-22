@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
       clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
-      chain: "Polygon",
+      chain: "Mumbai",
       // Optional: custom CSS styling properties:
       styles: {
         colorBackground: "#202020",
@@ -35,7 +35,6 @@ function App() {
     if (!paper) {
       return;
     }
-    console.log("paper", paper);
 
     const paperUserStatus = await paper.getUserStatus();
     console.log("paperUserStatus", paperUserStatus);
@@ -55,17 +54,15 @@ function App() {
   }, [paper, fetchUserStatus]);
 
   const loginWithEmail = async () => {
-    const result = await paper!.auth.loginWithOtp({
+    const result = await paper?.auth.loginWithOtp({
       email: emailAddress,
     });
     console.log(`loginWithEmail result: ${result}`);
+    await fetchUserStatus();
   };
 
   const loginWithGoogle = async () => {
-    if (!paper) {
-      return;
-    }
-    await paper.auth.initializeSocialOAuth({
+    await paper?.auth.initializeSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri:
         "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
@@ -73,20 +70,19 @@ function App() {
   };
 
   const googleCallback = async () => {
-    if (!paper) {
-      return;
-    }
-    const resp = await paper.auth.loginWithSocialOAuth({
+    const resp = await paper?.auth.loginWithSocialOAuth({
       provider: AuthProvider.GOOGLE,
       redirectUri:
         "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
     });
     console.log("googleCallback response", resp);
+    await fetchUserStatus();
   };
 
   const activateWallet = async () => {
-    const response = await paper!.initializeUser();
+    const response = await paper?.initializeUser();
     console.log("response from activateWallet", response);
+    await fetchUserStatus();
   };
 
   const getAddress = async () => {
@@ -139,16 +135,17 @@ function App() {
     } as ContractCallInputType;
     console.log("params", params);
     try {
-      // const result = await user?.wallet.writeTo.contract(params);
-      // console.log("transactionHash", result?.transactionHash);
+      const result = await user?.wallet.gasless.callContract(params);
+      console.log("transactionHash", result?.transactionHash);
     } catch (e) {
       console.error(`something went wrong sending gasless transaction ${e}`);
     }
   };
 
   const logout = async () => {
-    const response = await paper!.auth.logout();
+    const response = await paper?.auth.logout();
     console.log("logout response", response);
+    await fetchUserStatus();
   };
 
   return (
