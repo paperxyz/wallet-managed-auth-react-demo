@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@chakra-ui/react": "2.4.4",
+    "@emotion/react": "11.10.5",
+    "@emotion/styled": "11.10.5",
     "@paperxyz/embedded-wallet-service-sdk": "^0.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -12,6 +15,7 @@
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "ethers": "^5.7.2",
+    "framer-motion": "8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

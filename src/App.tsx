@@ -1,20 +1,31 @@
 import {
+  Box,
+  Button,
+  Code,
+  Heading,
+  Image,
+  SimpleGrid,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import {
   AuthProvider,
-  ContractCallInputType,
   GetUserStatusType,
   InitializedUser,
   PaperEmbeddedWalletSdk,
   UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
-import { ethers } from "ethers";
 import { useCallback, useEffect, useState } from "react";
-import "./App.css";
+import { Login } from "./Login";
+import { WalletActivation } from "./WalletActivation";
+import { WalletFeatures } from "./WalletFeatures";
+import { WalletInfo } from "./WalletInfo";
 
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
   const [userDetails, setUserDetails] = useState<GetUserStatusType>();
   const [user, setUser] = useState<InitializedUser>();
-  const [emailAddress, setEmailAddress] = useState<string>();
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
@@ -75,85 +86,6 @@ function App() {
     }
   }, [paper, fetchUserStatus]);
 
-  const loginWithEmail = async () => {
-    const result = await paper?.auth.loginWithOtp({
-      email: emailAddress,
-    });
-    console.log(`loginWithEmail result: ${result}`);
-    await fetchUserStatus();
-  };
-
-  const loginWithGoogle = async () => {
-    await paper?.auth.initializeSocialOAuth({
-      provider: AuthProvider.GOOGLE,
-      redirectUri:
-        "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
-    });
-  };
-
-  const activateWallet = async () => {
-    const response = await paper?.initializeUser();
-    console.log("response from activateWallet", response);
-    await fetchUserStatus();
-  };
-
-  const getAddress = async () => {
-    const wallet = user?.wallet;
-    const signer = await wallet?.getEthersJsSigner();
-    const address = await signer?.getAddress();
-    console.log("address", address);
-  };
-  const signMessage = async () => {
-    const wallet = user?.wallet;
-    const signer = await wallet?.getEthersJsSigner({
-      rpcEndpoint: "mainnet",
-    });
-    const signedMessage = await signer?.signMessage("hello world");
-    console.log("signedMessage", signedMessage);
-  };
-
-  const signTransactionEth = async () => {
-    const wallet = user?.wallet;
-    const signer = await wallet?.getEthersJsSigner({
-      rpcEndpoint: "mainnet",
-    });
-    const tx = {
-      to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
-      value: ethers.utils.parseEther("0.1"),
-    };
-    const signedTransaction = await signer?.signTransaction(tx);
-    console.log("signedTransaction", signedTransaction);
-  };
-
-  const signTransactionGoerli = async () => {
-    const wallet = user?.wallet;
-    const signer = await wallet?.getEthersJsSigner({
-      rpcEndpoint: "goerli",
-    });
-    const tx = {
-      to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
-      value: ethers.utils.parseEther("0.1"),
-    };
-    const signedTransaction = await signer?.signTransaction(tx);
-    console.log("signedTransaction", signedTransaction);
-  };
-
-  const callContractGasless = async () => {
-    const params = {
-      contractAddress: "0xb2369209b4eb1e76a43fAd914B1d29f6508c8aae",
-      methodArgs: [user?.walletAddress ?? "", 1, 0],
-      methodInterface:
-        "function claimTo(address _to, uint256 _tokeIt, uint256 _quantity) external",
-    } as ContractCallInputType;
-    console.log("params", params);
-    try {
-      const result = await user?.wallet.gasless.callContract(params);
-      console.log("transactionHash", result?.transactionHash);
-    } catch (e) {
-      console.error(`something went wrong sending gasless transaction ${e}`);
-    }
-  };
-
   const logout = async () => {
     const response = await paper?.auth.logout();
     console.log("logout response", response);
@@ -161,87 +93,63 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <h1>Wallets + Auth demo</h1>
-      {!userDetails ? (
-        <>Loading...</>
-      ) : userDetails.status === UserStatus.LOGGED_OUT ? (
-        <>
-          <input
-            type="text"
-            placeholder="Email address"
-            onChange={(e) => {
-              setEmailAddress(e.target.value);
-            }}
+    <SimpleGrid columns={2}>
+      <Box p={10} bg="gray.100" height="100vh">
+        <Stack spacing={10}>
+          <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
+          <Stack spacing={0}>
+            <Heading>Wallets & Auth demo</Heading>
+            <Text size="sm" fontStyle="italic" color="gray.500">
+              by Paper
+            </Text>
+          </Stack>
+          {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
+            <Button
+              alignSelf="start"
+              onClick={logout}
+              colorScheme="blue"
+              variant="outline"
+            >
+              Logout
+            </Button>
+          )}
+        </Stack>
+      </Box>
+      <Box bg="blue.200" p={10} height="100vh" overflowY="auto">
+        {!userDetails ? (
+          <Spinner size="md" color="white" />
+        ) : userDetails.status === UserStatus.LOGGED_OUT ? (
+          <Login paper={paper} onLoginSuccess={fetchUserStatus} />
+        ) : userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
+          userDetails.status === UserStatus.LOGGED_IN_NEW_DEVICE ? (
+          <WalletActivation
+            email={userDetails.data.authDetails.email}
+            onWalletActivated={fetchUserStatus}
+            paper={paper}
           />
-          <button onClick={loginWithEmail}>Log in with Email</button>
-          <br /> - OR - <br />
-          <button onClick={loginWithGoogle}>Log in with Google</button>
-        </>
-      ) : userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
-        userDetails.status === UserStatus.LOGGED_IN_NEW_DEVICE ? (
-        <>
-          Successfully authenticated. Wallet not found on current device.
-          <br />
-          <br />
-          Authenticated email: {userDetails.data.authDetails.email}
-          <br />
-          <br />
-          <button onClick={activateWallet}>
-            Activate wallet on this device
-          </button>
-        </>
-      ) : (
-        <>
-          Successfully authenticated and wallet ready to use on this device.
-          <br />
-          <br />
-          Authenticated email: {userDetails.data.authDetails.email}
-          <br />
-          Wallet address:
-          <br />
-          <br />
-          Wallet features:
-          <br />
-          <button
-            onClick={getAddress}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
+        ) : (
+          <Stack spacing={10}>
+            <WalletInfo
+              email={userDetails.data.authDetails.email}
+              walletAddress={userDetails.data.walletAddress}
+            />
+            <WalletFeatures user={user} />
+          </Stack>
+        )}
+        {!!userDetails && (
+          <Code
+            mt={10}
+            w="100%"
+            bg="blue.100"
+            fontSize="12px"
+            borderRadius={8}
+            p={6}
           >
-            GetAddress
-          </button>
-          <button
-            onClick={signMessage}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            SignMessage
-          </button>
-          <button
-            onClick={signTransactionEth}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            SignTransaction Eth
-          </button>
-          <button
-            onClick={signTransactionGoerli}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            SignTransaction Goerli
-          </button>
-          <button
-            onClick={callContractGasless}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            Call contract method (gasless)
-          </button>
-          <button
-            onClick={logout}
-            className="m-2 rounded-xl bg-orange-600 px-4 py-2 hover:bg-orange-700 active:bg-orange-800"
-          >
-            Logout
-          </button>
-        </>
-      )}
-    </div>
+            <pre>{JSON.stringify(userDetails, null, 2)}</pre>
+          </Code>
+        )}
+      </Box>
+    </SimpleGrid>
   );
 }
 
