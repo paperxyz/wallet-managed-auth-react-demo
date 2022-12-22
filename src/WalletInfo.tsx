@@ -5,6 +5,7 @@ import {
   Divider,
   Stack,
   Text,
+  Link,
 } from "@chakra-ui/react";
 
 interface Props {
@@ -28,7 +29,16 @@ export const WalletInfo: React.FC<Props> = ({ email, walletAddress }) => {
             <CardBody>Authenticated email: {email}</CardBody>
           </Card>
           <Card>
-            <CardBody>Wallet address: {walletAddress}</CardBody>
+            <CardBody>
+              Wallet address:{" "}
+              <Link
+                isExternal
+                textDecoration="underline"
+                href={`https://mumbai.polygonscan.com/address/${walletAddress}`}
+              >
+                {walletAddress}
+              </Link>
+            </CardBody>
           </Card>
         </Stack>
       </CardBody>

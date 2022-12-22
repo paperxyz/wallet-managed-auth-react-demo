@@ -103,6 +103,14 @@ function App() {
               by Paper
             </Text>
           </Stack>
+          <Text maxW={400}>
+            Welcome to Paper's Embedded Wallet Service (EWS) Alpha Sample App.
+            <br />
+            <br />
+            With this alpha sample app, you can explore the various features of
+            our EWS platform and get a feel for how it can benefit your own
+            project
+          </Text>
           {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
             <Button
               alignSelf="start"

@@ -2,8 +2,10 @@ import {
   Button,
   Card,
   CardBody,
+  Code,
   Divider,
   Heading,
+  Link,
   Stack,
 } from "@chakra-ui/react";
 import {
@@ -27,13 +29,22 @@ enum Features {
 
 export const WalletFeatures: React.FC<Props> = ({ user }) => {
   const [loading, setLoading] = useState<Features | null>(null);
+  const [result, setResult] = useState<any>(null);
   const wallet = user?.wallet;
-
+  const onResult = (result: any) => {
+    setResult((prevState: any) => ({
+      ...(prevState || {}),
+      ...result,
+    }));
+  };
   const getAddress = async () => {
     setLoading(Features.GET_WALLET);
     const signer = await wallet?.getEthersJsSigner();
     const address = await signer?.getAddress();
     setLoading(null);
+    onResult({
+      wallet: address,
+    });
     console.log("address", address);
   };
 
@@ -43,6 +54,9 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       rpcEndpoint: "mainnet",
     });
     const signedMessage = await signer?.signMessage("hello world");
+    onResult({
+      signedMessage,
+    });
     setLoading(null);
     console.log("signedMessage", signedMessage);
   };
@@ -56,9 +70,12 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
       value: ethers.utils.parseEther("0.1"),
     };
-    const signedTransaction = await signer?.signTransaction(tx);
+    const signedTransactionEth = await signer?.signTransaction(tx);
+    onResult({
+      signedTransactionEth,
+    });
     setLoading(null);
-    console.log("signedTransaction", signedTransaction);
+    console.log("signedTransaction", signedTransactionEth);
   };
 
   const signTransactionGoerli = async () => {
@@ -70,9 +87,12 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
       value: ethers.utils.parseEther("0.1"),
     };
-    const signedTransaction = await signer?.signTransaction(tx);
+    const signedTransactionGoerli = await signer?.signTransaction(tx);
+    onResult({
+      signedTransactionGoerli,
+    });
     setLoading(null);
-    console.log("signedTransaction", signedTransaction);
+    console.log("signedTransaction", signedTransactionGoerli);
   };
 
   const callContractGasless = async () => {
@@ -87,6 +107,9 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
     try {
       const result = await user?.wallet.gasless.callContract(params);
       console.log("transactionHash", result?.transactionHash);
+      onResult({
+        gaslessTransactionHash: result?.transactionHash,
+      });
     } catch (e) {
       console.error(`something went wrong sending gasless transaction ${e}`);
     } finally {
@@ -99,42 +122,88 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       <CardBody>
         <Heading size="md">Wallet Features</Heading>
         <Divider my={4} />
-        <Stack spacing={4}>
-          <Button
-            onClick={getAddress}
-            colorScheme="blue"
-            isLoading={loading === Features.GET_WALLET}
-          >
-            Get Wallet Address
-          </Button>
-          <Button
-            onClick={signMessage}
-            colorScheme="blue"
-            isLoading={loading === Features.SIGN_MESSAGE}
-          >
-            Sign Message
-          </Button>
-          <Button
-            onClick={signTransactionEth}
-            colorScheme="blue"
-            isLoading={loading === Features.SIGN_T_ETH}
-          >
-            Sign Transaction (Eth)
-          </Button>
-          <Button
-            onClick={signTransactionGoerli}
-            colorScheme="blue"
-            isLoading={loading === Features.SIGN_T_GOERLI}
-          >
-            Sign Transaction (Goerli)
-          </Button>
-          <Button
-            onClick={callContractGasless}
-            colorScheme="blue"
-            isLoading={loading === Features.CALL_GASLESS_CONTRACT}
-          >
-            Call contract method (Gasless)
-          </Button>
+        <Stack spacing={4} divider={<Divider />}>
+          <Stack>
+            <Button
+              onClick={getAddress}
+              colorScheme="blue"
+              isLoading={loading === Features.GET_WALLET}
+            >
+              Get Wallet Address
+            </Button>
+            <Code borderRadius={8} p={4}>
+              <Heading size="sm">Result:</Heading>
+              {result?.wallet && (
+                <Link
+                  isExternal
+                  textDecoration="underline"
+                  href={`https://mumbai.polygonscan.com/address/${result.wallet}`}
+                >
+                  {result.wallet}
+                </Link>
+              )}
+            </Code>
+          </Stack>
+          <Stack>
+            <Button
+              onClick={signMessage}
+              colorScheme="blue"
+              isLoading={loading === Features.SIGN_MESSAGE}
+            >
+              Sign Message
+            </Button>
+            <Code borderRadius={8} p={4} width="full">
+              <Heading size="sm">Result:</Heading>
+              {result?.signedMessage}
+            </Code>
+          </Stack>
+          <Stack>
+            <Button
+              onClick={signTransactionEth}
+              colorScheme="blue"
+              isLoading={loading === Features.SIGN_T_ETH}
+            >
+              Sign Transaction (Eth)
+            </Button>
+            <Code borderRadius={8} p={4} width="full">
+              <Heading size="sm">Result:</Heading>
+              {result?.signedTransactionEth}
+            </Code>
+          </Stack>
+          <Stack>
+            <Button
+              onClick={signTransactionGoerli}
+              colorScheme="blue"
+              isLoading={loading === Features.SIGN_T_GOERLI}
+            >
+              Sign Transaction (Goerli)
+            </Button>
+            <Code borderRadius={8} p={4} width="full">
+              <Heading size="sm">Result:</Heading>
+              {result?.signedTransactionGoerli}
+            </Code>
+          </Stack>
+          <Stack>
+            <Button
+              onClick={callContractGasless}
+              colorScheme="blue"
+              isLoading={loading === Features.CALL_GASLESS_CONTRACT}
+            >
+              Call contract method (Gasless)
+            </Button>
+            <Code borderRadius={8} p={4} width="full">
+              <Heading size="sm">Result:</Heading>
+              {result?.gaslessTransactionHash && (
+                <Link
+                  isExternal
+                  textDecoration="underline"
+                  href={`https://mumbai.polygonscan.com/tx/${result.gaslessTransactionHash}`}
+                >
+                  {result.gaslessTransactionHash}
+                </Link>
+              )}
+            </Code>
+          </Stack>
         </Stack>
       </CardBody>
     </Card>
