@@ -47,6 +47,28 @@ function App() {
     }
   }, [paper]);
 
+  // Callback from Google login
+  useEffect(() => {
+    if (!paper) {
+      return;
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get("code");
+
+    if (code) {
+      (async () => {
+        const resp = await paper?.auth.loginWithSocialOAuth({
+          provider: AuthProvider.GOOGLE,
+          redirectUri:
+            "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
+        });
+        console.log("googleCallback response", resp);
+        await fetchUserStatus();
+      })();
+    }
+  }, [fetchUserStatus, paper]);
+
   useEffect(() => {
     if (paper && fetchUserStatus) {
       fetchUserStatus();
@@ -67,16 +89,6 @@ function App() {
       redirectUri:
         "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
     });
-  };
-
-  const googleCallback = async () => {
-    const resp = await paper?.auth.loginWithSocialOAuth({
-      provider: AuthProvider.GOOGLE,
-      redirectUri:
-        "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
-    });
-    console.log("googleCallback response", resp);
-    await fetchUserStatus();
   };
 
   const activateWallet = async () => {
