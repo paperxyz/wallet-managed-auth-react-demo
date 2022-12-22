@@ -25,12 +25,14 @@ export const WalletInfo: React.FC<Props> = ({ email, walletAddress }) => {
             on this device.
           </Text>
 
-          <Card>
-            <CardBody>Authenticated email: {email}</CardBody>
-          </Card>
-          <Card>
+          <Card variant="outline">
             <CardBody>
-              Wallet address:{" "}
+              <strong>Authenticated email:</strong> {email}
+            </CardBody>
+          </Card>
+          <Card variant="outline">
+            <CardBody>
+              <strong>Wallet address: </strong>
               <Link
                 isExternal
                 textDecoration="underline"

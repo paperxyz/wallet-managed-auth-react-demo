@@ -94,7 +94,7 @@ function App() {
 
   return (
     <SimpleGrid columns={2}>
-      <Box p={10} bg="gray.100" height="100vh">
+      <Box p={10} height="100vh">
         <Stack spacing={10}>
           <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
           <Stack spacing={0}>
@@ -123,9 +123,22 @@ function App() {
           )}
         </Stack>
       </Box>
-      <Box bg="blue.200" p={10} height="100vh" overflowY="auto">
+      <Box
+        bg="blue.200"
+        boxShadow="-2px 0px 2px #6294b4"
+        p={10}
+        height="100vh"
+        overflowY="auto"
+      >
         {!userDetails ? (
-          <Spinner size="md" color="white" />
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="full"
+          >
+            <Spinner size="md" color="white" />
+          </Box>
         ) : userDetails.status === UserStatus.LOGGED_OUT ? (
           <Login paper={paper} onLoginSuccess={fetchUserStatus} />
         ) : userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||

@@ -7,6 +7,7 @@ import {
   Heading,
   Link,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import {
   ContractCallInputType,
@@ -26,6 +27,8 @@ enum Features {
   SIGN_T_GOERLI = "SIGN_T_GOERLI",
   CALL_GASLESS_CONTRACT = "CALL_GASLESS_CONTRACT",
 }
+
+const PLACEHOLDER = "The result will appear here";
 
 export const WalletFeatures: React.FC<Props> = ({ user }) => {
   const [loading, setLoading] = useState<Features | null>(null);
@@ -132,8 +135,7 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
               Get Wallet Address
             </Button>
             <Code borderRadius={8} p={4}>
-              <Heading size="sm">Result:</Heading>
-              {result?.wallet && (
+              {result?.wallet ? (
                 <Link
                   isExternal
                   textDecoration="underline"
@@ -141,6 +143,10 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
                 >
                   {result.wallet}
                 </Link>
+              ) : (
+                <Text color="gray.500" fontStyle="italic" size="sm">
+                  {PLACEHOLDER}
+                </Text>
               )}
             </Code>
           </Stack>
@@ -153,8 +159,11 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
               Sign Message
             </Button>
             <Code borderRadius={8} p={4} width="full">
-              <Heading size="sm">Result:</Heading>
-              {result?.signedMessage}
+              {result?.signedMessage || (
+                <Text color="gray.500" fontStyle="italic" size="sm">
+                  {PLACEHOLDER}
+                </Text>
+              )}
             </Code>
           </Stack>
           <Stack>
@@ -166,8 +175,11 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
               Sign Transaction (Eth)
             </Button>
             <Code borderRadius={8} p={4} width="full">
-              <Heading size="sm">Result:</Heading>
-              {result?.signedTransactionEth}
+              {result?.signedTransactionEth || (
+                <Text color="gray.500" fontStyle="italic" size="sm">
+                  {PLACEHOLDER}
+                </Text>
+              )}
             </Code>
           </Stack>
           <Stack>
@@ -179,8 +191,11 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
               Sign Transaction (Goerli)
             </Button>
             <Code borderRadius={8} p={4} width="full">
-              <Heading size="sm">Result:</Heading>
-              {result?.signedTransactionGoerli}
+              {result?.signedTransactionGoerli || (
+                <Text color="gray.500" fontStyle="italic" size="sm">
+                  {PLACEHOLDER}
+                </Text>
+              )}
             </Code>
           </Stack>
           <Stack>
@@ -192,8 +207,7 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
               Call contract method (Gasless)
             </Button>
             <Code borderRadius={8} p={4} width="full">
-              <Heading size="sm">Result:</Heading>
-              {result?.gaslessTransactionHash && (
+              {result?.gaslessTransactionHash ? (
                 <Link
                   isExternal
                   textDecoration="underline"
@@ -201,6 +215,10 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
                 >
                   {result.gaslessTransactionHash}
                 </Link>
+              ) : (
+                <Text color="gray.500" fontStyle="italic" size="sm">
+                  {PLACEHOLDER}
+                </Text>
               )}
             </Code>
           </Stack>

@@ -41,8 +41,10 @@ export const WalletActivation: React.FC<Props> = ({
               You are authenticated but a wallet was not found on the current
               device
             </Text>
-            <Card>
-              <CardBody>Authenticated email: {email}</CardBody>
+            <Card variant="outline">
+              <CardBody>
+                <strong>Authenticated email:</strong> {email}
+              </CardBody>
             </Card>
           </Stack>
           <Button
