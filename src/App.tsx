@@ -2,8 +2,11 @@ import {
   Box,
   Button,
   Code,
+  Flex,
+  GridItem,
   Heading,
   Image,
+  Link,
   SimpleGrid,
   Spinner,
   Stack,
@@ -93,6 +96,16 @@ function App() {
 
   return (
     <SimpleGrid columns={2}>
+      <GridItem colSpan={2} bg="blue.500" h={12}>
+        <Flex w="full" h="full" align="center" justify="center">
+          <Text fontSize="xl">
+            For more information, check out{" "}
+            <Link isExternal href="https://ews.withpaper.com" fontWeight="bold">
+              the docs
+            </Link>
+          </Text>
+        </Flex>
+      </GridItem>
       <Box p={10} height="100vh">
         <Stack spacing={10}>
           <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
@@ -110,6 +123,7 @@ function App() {
             our EWS platform and get a feel for how it can benefit your own
             project
           </Text>
+
           {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
             <Button
               alignSelf="start"
