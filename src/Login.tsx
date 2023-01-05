@@ -1,12 +1,12 @@
 import {
+  Button,
   Card,
   CardBody,
-  Heading,
   Divider,
-  Stack,
-  Input,
+  Heading,
   HStack,
-  Button,
+  Input,
+  Stack,
 } from "@chakra-ui/react";
 import {
   AuthProvider,
@@ -23,7 +23,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   const [emailAddress, setEmailAddress] = useState<string>("");
   const loginWithGoogle = async () => {
     await paper?.auth.initializeSocialOAuth({
-      provider: AuthProvider.GOOGLE,
+      authProvider: AuthProvider.GOOGLE,
       redirectUri:
         "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
     });

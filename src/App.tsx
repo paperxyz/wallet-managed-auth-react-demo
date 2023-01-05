@@ -35,7 +35,7 @@ function App() {
       styles: {
         colorBackground: "#202020",
         colorText: "white",
-        colorPrimary: "purple",
+        colorPrimary: "blue",
         borderRadius: 5,
       },
     });
@@ -70,7 +70,7 @@ function App() {
     if (code) {
       (async () => {
         const resp = await paper?.auth.loginWithSocialOAuth({
-          provider: AuthProvider.GOOGLE,
+          authProvider: AuthProvider.GOOGLE,
           redirectUri:
             "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
         });
