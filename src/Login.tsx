@@ -24,8 +24,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   const loginWithGoogle = async () => {
     await paper?.auth.initializeSocialOAuth({
       authProvider: AuthProvider.GOOGLE,
-      redirectUri:
-        "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
+      redirectUri: "https://ews-demo.withpaper.com",
     });
   };
 

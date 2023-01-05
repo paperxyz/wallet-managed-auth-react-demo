@@ -2,7 +2,7 @@
 
 **Note: This is private alpha. To get full access to this repository and product, you will need email Harpriya (harpriya@withpaper.com) for waitlist access.**
 
-Feel free to play around with a live deployment of this sample app [here](https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app)
+Feel free to play around with a live deployment of this sample app [here](https://ews-demo.withpaper.com)
 
 Find the docs with more information [here](https://ews.withpaper.com/docs)
 

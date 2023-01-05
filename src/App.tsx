@@ -71,8 +71,7 @@ function App() {
       (async () => {
         const resp = await paper?.auth.loginWithSocialOAuth({
           authProvider: AuthProvider.GOOGLE,
-          redirectUri:
-            "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
+          redirectUri: "https://ews-demo.withpaper.com",
         });
         console.log("googleCallback response", resp);
         await fetchUserStatus();
