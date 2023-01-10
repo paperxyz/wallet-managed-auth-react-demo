@@ -2,19 +2,22 @@ import {
   Box,
   Button,
   Code,
+  Flex,
+  GridItem,
   Heading,
   Image,
+  Link,
   SimpleGrid,
   Spinner,
   Stack,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import {
   AuthProvider,
   GetUserStatusType,
   InitializedUser,
   PaperEmbeddedWalletSdk,
-  UserStatus,
+  UserStatus
 } from "@paperxyz/embedded-wallet-service-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { Login } from "./Login";
@@ -35,7 +38,7 @@ function App() {
       styles: {
         colorBackground: "#202020",
         colorText: "white",
-        colorPrimary: "purple",
+        colorPrimary: "blue",
         borderRadius: 5,
       },
     });
@@ -71,8 +74,7 @@ function App() {
       (async () => {
         const resp = await paper?.auth.loginWithSocialOAuth({
           authProvider: AuthProvider.GOOGLE,
-          redirectUri:
-            "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
+          redirectUri: "https://ews-demo.withpaper.com",
         });
         console.log("googleCallback response", resp);
         await fetchUserStatus();
@@ -94,6 +96,16 @@ function App() {
 
   return (
     <SimpleGrid columns={2}>
+      <GridItem colSpan={2} bg="blue.500" h={12}>
+        <Flex w="full" h="full" align="center" justify="center" color='white'>
+          <Text fontSize="xl">
+            For more information, check out{" "}
+            <Link isExternal href="https://ews.withpaper.com" fontWeight="bold">
+              the docs
+            </Link>
+          </Text>
+        </Flex>
+      </GridItem>
       <Box p={10} height="100vh">
         <Stack spacing={10}>
           <Image src="/paper-logo-icon.svg" maxW={14} alt="logo" />
@@ -111,6 +123,7 @@ function App() {
             our EWS platform and get a feel for how it can benefit your own
             project
           </Text>
+
           {!!userDetails && userDetails.status !== UserStatus.LOGGED_OUT && (
             <Button
               alignSelf="start"
