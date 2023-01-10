@@ -25,6 +25,9 @@ import { WalletActivation } from "./WalletActivation";
 import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
 
+// TODO ADD THIS
+const PAPER_WALLET_KEY = ';
+
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
   const [userDetails, setUserDetails] = useState<GetUserStatusType>();
@@ -32,7 +35,7 @@ function App() {
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "c4d9ef08-a89d-40fc-b51b-b1002a374e5f",
+      clientId: PAPER_WALLET_KEY,
       chain: "Mumbai",
       // Optional: custom CSS styling properties:
       styles: {
