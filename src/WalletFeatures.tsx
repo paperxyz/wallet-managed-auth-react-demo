@@ -13,6 +13,7 @@ import {
   ContractCallInputType,
   InitializedUser,
 } from "@paperxyz/embedded-wallet-service-sdk";
+import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { ethers } from "ethers";
 import { useState } from "react";
 
@@ -30,9 +31,20 @@ enum Features {
 
 const PLACEHOLDER = "The result will appear here";
 
+// TODO PUT UR PRIVATE KEY HERE
+const THIRDWEB_PRIVATE_KEY = '';
+const ERC721_CONTRACT = '0x87869b58bd7A4504b4961E4783ba0C784D6dD9F6';
+
 export const WalletFeatures: React.FC<Props> = ({ user }) => {
   const [loading, setLoading] = useState<Features | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [args, setArgs] = useState<any[]>([]);
+
+  console.log('user', user)
+  // if (!user) {
+  //   throw new Error('No user found')
+  // }
+
   const wallet = user?.wallet;
   const onResult = (result: any) => {
     setResult((prevState: any) => ({
@@ -120,6 +132,62 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
     }
   };
 
+  const fetchContractArgs = async () => {
+    const signer = new ethers.Wallet(
+      THIRDWEB_PRIVATE_KEY,
+      new ThirdwebSDK("mumbai").getProvider()
+    );
+    const sdk = new ThirdwebSDK(signer);
+    const quantity = 1;
+
+    try {
+      const contract = await sdk.getContract(ERC721_CONTRACT);
+      const preparedClaims = await contract.erc721.claimConditions.prepareClaim(
+        quantity,
+        true
+      );
+      const args = await contract.erc721.claimConditions.getClaimArguments(
+        user!.walletAddress,
+        quantity,
+        preparedClaims
+      );
+      console.log("args", args);
+      setArgs(args);
+    } catch (e) {
+      console.error("error fetching", e);
+    }
+  };
+
+  const callContract = async () => {
+    console.log("calling thirdweb contract");
+    const { wallet } = user!;
+
+    const argstemp = [
+      "0x01921fde091A964b712843762C878F5C5b6cc69c",
+      1,
+      "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      0,
+      {
+        "proof": [
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+        ],
+        "quantityLimitPerWallet": 1,
+        "pricePerToken": 0,
+        "currency": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      },
+      []
+    ]
+
+    // this is calling a thirdweb nft drop contract
+    const { transactionHash } = await wallet.gasless.callContract({
+      contractAddress: ERC721_CONTRACT,
+      methodArgs: argstemp,
+      methodInterface:
+        "function claim(address _receiver, uint256 _quantity, address _currency, uint256 _pricePerToken, bytes32[] calldata _allowlistProof, bytes _data) public payable virtual override",
+    });
+    console.log("transactionHash", transactionHash);
+  };
+
   return (
     <Card bg="white" borderRadius={8}>
       <CardBody>
@@ -127,6 +195,8 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
         <Divider my={4} />
         <Stack spacing={4} divider={<Divider />}>
           <Stack>
+            <Button onClick={fetchContractArgs}>Fetch args</Button>
+            <Button onClick={callContract}>Call thirdweb contract</Button>
             <Button
               onClick={getAddress}
               colorScheme="blue"

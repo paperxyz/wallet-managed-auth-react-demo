@@ -29,7 +29,7 @@ function App() {
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
+      clientId: "c4d9ef08-a89d-40fc-b51b-b1002a374e5f",
       chain: "Mumbai",
       // Optional: custom CSS styling properties:
       styles: {
@@ -70,7 +70,7 @@ function App() {
     if (code) {
       (async () => {
         const resp = await paper?.auth.loginWithSocialOAuth({
-          provider: AuthProvider.GOOGLE,
+          authProvider: AuthProvider.GOOGLE,
           redirectUri:
             "https://wallet-managed-auth-react-demo-mug0.zeet-paper.zeet.app",
         });
