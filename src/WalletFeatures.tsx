@@ -32,15 +32,15 @@ enum Features {
 const PLACEHOLDER = "The result will appear here";
 
 // TODO PUT UR PRIVATE KEY HERE
-const THIRDWEB_PRIVATE_KEY = '';
-const ERC721_CONTRACT = '0x87869b58bd7A4504b4961E4783ba0C784D6dD9F6';
+const THIRDWEB_PRIVATE_KEY = "";
+const ERC721_CONTRACT = "0x87869b58bd7A4504b4961E4783ba0C784D6dD9F6";
 
 export const WalletFeatures: React.FC<Props> = ({ user }) => {
   const [loading, setLoading] = useState<Features | null>(null);
   const [result, setResult] = useState<any>(null);
   const [args, setArgs] = useState<any[]>([]);
 
-  console.log('user', user)
+  console.log("user", user);
   // if (!user) {
   //   throw new Error('No user found')
   // }
@@ -167,23 +167,21 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       1,
       "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
       0,
-      {
-        "proof": [
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ],
-        "quantityLimitPerWallet": 1,
-        "pricePerToken": 0,
-        "currency": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-      },
-      []
-    ]
+      [
+        ["0x0000000000000000000000000000000000000000000000000000000000000000"],
+        1,
+        0,
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      ],
+      [],
+    ];
 
     // this is calling a thirdweb nft drop contract
     const { transactionHash } = await wallet.gasless.callContract({
       contractAddress: ERC721_CONTRACT,
       methodArgs: argstemp,
       methodInterface:
-        "function claim(address _receiver, uint256 _quantity, address _currency, uint256 _pricePerToken, bytes32[] calldata _allowlistProof, bytes _data) public payable virtual override",
+        "function claim(address _receiver,uint256 _quantity,address _currency,  uint256 pricePerToken, tuple(bytes32[] proof, uint256 quantityLimitPerWallet, uint256 pricePerToken, address currency) calldata _allowlistProof,bytes memory _data) public payable virtual override",
     });
     console.log("transactionHash", transactionHash);
   };

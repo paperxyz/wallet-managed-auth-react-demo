@@ -10,14 +10,14 @@ import {
   SimpleGrid,
   Spinner,
   Stack,
-  Text
+  Text,
 } from "@chakra-ui/react";
 import {
   AuthProvider,
   GetUserStatusType,
   InitializedUser,
   PaperEmbeddedWalletSdk,
-  UserStatus
+  UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { Login } from "./Login";
@@ -26,7 +26,7 @@ import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
 
 // TODO ADD THIS
-const PAPER_WALLET_KEY = ';
+const PAPER_WALLET_KEY = "";
 
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
@@ -100,7 +100,7 @@ function App() {
   return (
     <SimpleGrid columns={2}>
       <GridItem colSpan={2} bg="blue.500" h={12}>
-        <Flex w="full" h="full" align="center" justify="center" color='white'>
+        <Flex w="full" h="full" align="center" justify="center" color="white">
           <Text fontSize="xl">
             For more information, check out{" "}
             <Link isExternal href="https://ews.withpaper.com" fontWeight="bold">
