@@ -9,7 +9,7 @@ Find the docs with more information [here](https://ews.withpaper.com/docs)
 To run this app locally, clone this repo, run `npm install`, and `npm start`
 The rendered page should look like the following image:
 
-<img width="770" alt="image" src="https://user-images.githubusercontent.com/44563205/213288511-8b325764-4f78-4cda-b40a-ddbf1395aeb3.png)
+<img width="770" alt="image" src="https://user-images.githubusercontent.com/44563205/213288511-8b325764-4f78-4cda-b40a-ddbf1395aeb3.png
 ">
 
 
