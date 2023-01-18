@@ -9,7 +9,9 @@ Find the docs with more information [here](https://ews.withpaper.com/docs)
 To run this app locally, clone this repo, run `npm install`, and `npm start`
 The rendered page should look like the following image:
 
-<img width="770" alt="image" src="https://user-images.githubusercontent.com/44563205/210889009-684723d5-e0c7-40c8-94f2-5b589af0b65b.png">
+<img width="770" alt="image" src="https://user-images.githubusercontent.com/44563205/213288511-8b325764-4f78-4cda-b40a-ddbf1395aeb3.png)
+">
+
 
 Logging in with email address is using the `<Login>` component and sends a unique 6-digit code from Paper to the email given in the input. Upon verification, the user is then prompted to enter a security password and download an 8-word secret recovery phrase to reset the password in the event that the password is lost or forgotten. The user will be prompted to enter this password every time they log in using a new device.
 
