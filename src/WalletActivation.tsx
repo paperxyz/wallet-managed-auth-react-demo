@@ -1,10 +1,10 @@
 import {
+  Button,
   Card,
   CardBody,
-  Heading,
   Divider,
+  Heading,
   Stack,
-  Button,
   Text,
 } from "@chakra-ui/react";
 import { PaperEmbeddedWalletSdk } from "@paperxyz/embedded-wallet-service-sdk";
@@ -24,10 +24,15 @@ export const WalletActivation: React.FC<Props> = ({
   const [loading, setLoading] = useState(false);
   const activateWallet = async () => {
     setLoading(true);
-    const response = await paper?.initializeUser();
-    console.log("response from activateWallet", response);
-    setLoading(false);
-    onWalletActivated();
+    try {
+      const response = await paper?.initializeUser();
+      console.log("response from activateWallet", response);
+      setLoading(false);
+      onWalletActivated();
+    } catch (e) {
+      setLoading(false);
+      console.error("Error calling initializeUser", e);
+    }
   };
 
   return (
