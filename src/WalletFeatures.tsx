@@ -104,7 +104,7 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
       contractAddress: "0xb2369209b4eb1e76a43fAd914B1d29f6508c8aae",
       methodArgs: [user?.walletAddress ?? "", 1, 0],
       methodInterface:
-        "function claimTo(address _to, uint256 _tokeIt, uint256 _quantity) external",
+        "function claimTo(address _to, uint256 _quantity, uint256 _tokenId) external",
     } as ContractCallInputType;
     console.log("params", params);
     try {
