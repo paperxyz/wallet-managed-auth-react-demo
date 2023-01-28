@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  Card,
+  CardBody,
   Code,
   Flex,
   GridItem,
@@ -13,13 +15,13 @@ import {
   Text,
 } from "@chakra-ui/react";
 import {
-  AuthProvider,
   GetUserStatusType,
   InitializedUser,
   PaperEmbeddedWalletSdk,
   UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
 import { useCallback, useEffect, useState } from "react";
+import { CodeSnippet } from "./CodeSnippet";
 import { Login } from "./Login";
 import { WalletActivation } from "./WalletActivation";
 import { WalletFeatures } from "./WalletFeatures";
@@ -60,27 +62,6 @@ function App() {
       }
     }
   }, [paper]);
-
-  // Callback from Google login
-  useEffect(() => {
-    if (!paper) {
-      return;
-    }
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
-
-    if (code) {
-      (async () => {
-        const resp = await paper?.auth.loginWithSocialOAuth({
-          authProvider: AuthProvider.GOOGLE,
-          redirectUri: "https://ews-demo.withpaper.com",
-        });
-        console.log("googleCallback response", resp);
-        await fetchUserStatus();
-      })();
-    }
-  }, [fetchUserStatus, paper]);
 
   useEffect(() => {
     if (paper && fetchUserStatus) {
@@ -171,16 +152,17 @@ function App() {
           </Stack>
         )}
         {!!userDetails && (
-          <Code
-            mt={10}
-            w="100%"
-            bg="blue.100"
-            fontSize="12px"
-            borderRadius={8}
-            p={6}
-          >
-            <pre>{JSON.stringify(userDetails, null, 2)}</pre>
-          </Code>
+          <Card mt={10} w="100%" bg="white">
+            <CardBody>
+              <CodeSnippet userDetails={userDetails} />
+              <Text fontWeight="bold" mt={4} mb={2}>
+                UserDetails:
+              </Text>
+              <Code w="100%" fontSize="12px" borderRadius={8} p={6}>
+                <pre>{JSON.stringify(userDetails, null, 2)}</pre>
+              </Code>
+            </CardBody>
+          </Card>
         )}
       </Box>
     </SimpleGrid>
