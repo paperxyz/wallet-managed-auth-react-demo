@@ -155,12 +155,7 @@ function App() {
           <Card mt={10} w="100%" bg="white">
             <CardBody>
               <CodeSnippet userDetails={userDetails} />
-              <Text fontWeight="bold" mt={4} mb={2}>
-                UserDetails:
-              </Text>
-              <Code w="100%" fontSize="12px" borderRadius={8} p={6}>
-                <pre>{JSON.stringify(userDetails, null, 2)}</pre>
-              </Code>
+              <UserDetails userDetails={userDetails} />
             </CardBody>
           </Card>
         )}

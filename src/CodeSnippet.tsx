@@ -1,8 +1,10 @@
-import { Code, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import {
   GetUserStatusType,
   UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 export const CodeSnippet = ({
   userDetails,
@@ -76,11 +78,11 @@ if (user) {
   return (
     <>
       <Text fontWeight="bold" my={2}>
-        Code Implementation:
+        Paper related code snippet:
       </Text>
-      <Code w="100%" fontSize="12px" borderRadius={8} p={6}>
-        <pre>{codeSnippet}</pre>
-      </Code>
+      <SyntaxHighlighter language="typescript" style={tomorrow}>
+        {codeSnippet}
+      </SyntaxHighlighter>
     </>
   );
 };
