@@ -23,7 +23,7 @@ const Paper = new PaperEmbeddedWalletSdk({
 try {
     const result = await Paper.auth.loginWithPaperModal()
 } catch(e) {
-    // use cancelled login flow
+    // user cancelled login flow
 }
 
 // logging in via email OTP only
@@ -32,7 +32,7 @@ try {
         email: "you@example.com"
     })
 } catch(e) {
-    // use cancelled login flow
+    // user cancelled login flow
 }`;
   } else if (
     userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
