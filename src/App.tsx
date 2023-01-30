@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardBody,
-  Code,
   Flex,
   GridItem,
   Heading,
@@ -23,6 +22,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { CodeSnippet } from "./CodeSnippet";
 import { Login } from "./Login";
+import { UserDetails } from "./snippets/UserDetails";
 import { WalletActivation } from "./WalletActivation";
 import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
@@ -36,14 +36,8 @@ function App() {
     const paper = new PaperEmbeddedWalletSdk({
       clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
       chain: "Mumbai",
-      // Optional: custom CSS styling properties:
-      styles: {
-        colorBackground: "#202020",
-        colorText: "white",
-        colorPrimary: "blue",
-        borderRadius: 5,
-      },
     });
+    
     setPaper(paper);
   }, []);
 
