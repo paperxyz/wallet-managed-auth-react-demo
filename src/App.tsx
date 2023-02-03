@@ -14,8 +14,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import {
-  GetUserStatusType,
-  InitializedUser,
+  GetUser,
   PaperEmbeddedWalletSdk,
   UserStatus,
 } from "@paperxyz/embedded-wallet-service-sdk";
@@ -23,21 +22,18 @@ import { useCallback, useEffect, useState } from "react";
 import { CodeSnippet } from "./CodeSnippet";
 import { Login } from "./Login";
 import { UserDetails } from "./snippets/UserDetails";
-import { WalletActivation } from "./WalletActivation";
 import { WalletFeatures } from "./WalletFeatures";
 import { WalletInfo } from "./WalletInfo";
 
 function App() {
   const [paper, setPaper] = useState<PaperEmbeddedWalletSdk>();
-  const [userDetails, setUserDetails] = useState<GetUserStatusType>();
-  const [user, setUser] = useState<InitializedUser>();
+  const [userDetails, setUserDetails] = useState<GetUser>();
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
+      clientId: "5b7bcc6a-066e-4ecd-9229-7ac31ec688da",
       chain: "Mumbai",
     });
-    
     setPaper(paper);
   }, []);
 
@@ -46,15 +42,9 @@ function App() {
       return;
     }
 
-    const paperUserStatus = await paper.getUserStatus();
-    console.log("paperUserStatus", paperUserStatus);
-    setUserDetails(paperUserStatus);
-    switch (paperUserStatus.status) {
-      case UserStatus.LOGGED_IN_WALLET_INITIALIZED: {
-        const paperUserWithWallet = await paper.initializeUser();
-        setUser(paperUserWithWallet);
-      }
-    }
+    const paperUser = await paper.getUser();
+    console.log("paperUser", paperUser);
+    setUserDetails(paperUser);
   }, [paper]);
 
   useEffect(() => {
@@ -129,20 +119,19 @@ function App() {
           </Box>
         ) : userDetails.status === UserStatus.LOGGED_OUT ? (
           <Login paper={paper} onLoginSuccess={fetchUserStatus} />
-        ) : userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
-          userDetails.status === UserStatus.LOGGED_IN_NEW_DEVICE ? (
-          <WalletActivation
-            email={userDetails.data.authDetails.email}
-            onWalletActivated={fetchUserStatus}
-            paper={paper}
-          />
         ) : (
           <Stack spacing={10}>
             <WalletInfo
-              email={userDetails.data.authDetails.email}
-              walletAddress={userDetails.data.walletAddress}
+              email={userDetails.authDetails.email}
+              walletAddress={userDetails.walletAddress}
             />
-            <WalletFeatures user={user} />
+            <WalletFeatures
+              user={
+                userDetails.status === UserStatus.LOGGED_IN_WALLET_INITIALIZED
+                  ? userDetails
+                  : undefined
+              }
+            />
           </Stack>
         )}
         {!!userDetails && (

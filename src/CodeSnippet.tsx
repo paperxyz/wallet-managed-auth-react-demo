@@ -1,16 +1,9 @@
 import { Text } from "@chakra-ui/react";
-import {
-  GetUserStatusType,
-  UserStatus,
-} from "@paperxyz/embedded-wallet-service-sdk";
+import { GetUser, UserStatus } from "@paperxyz/embedded-wallet-service-sdk";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
-export const CodeSnippet = ({
-  userDetails,
-}: {
-  userDetails: GetUserStatusType;
-}) => {
+export const CodeSnippet = ({ userDetails }: { userDetails: GetUser }) => {
   let codeSnippet: string = "";
   if (userDetails.status === UserStatus.LOGGED_OUT) {
     codeSnippet = `
@@ -20,43 +13,20 @@ const Paper = new PaperEmbeddedWalletSdk({
 })
 
 // logging in via the Paper modal
-try {
-    const result = await Paper.auth.loginWithPaperModal()
-} catch(e) {
-    // user cancelled login flow
-}
+const result = await Paper.auth.loginWithPaperModal()
 
 // logging in via email OTP only
-try {
-    const result = await Paper.auth.loginWithPaperEmailOtp({
-        email: "you@example.com"
-    })
-} catch(e) {
-    // user cancelled login flow
-}`;
-  } else if (
-    userDetails.status === UserStatus.LOGGED_IN_WALLET_UNINITIALIZED ||
-    userDetails.status === UserStatus.LOGGED_IN_NEW_DEVICE
-  ) {
-    codeSnippet = `const Paper = new PaperEmbeddedWalletSdk({
-    clientId: "YOUR_CLIENT_ID",
-    chain: "Mumbai"
-})
-const user = await Paper.initializeUser();
-if (user) {
-    // user now has access to walletAddress, wallet, and authDetails
-} else {
-    // user is not logged into Paper yet
-}
-`;
+const result = await Paper.auth.loginWithPaperEmailOtp({
+  email: "you@example.com"
+})`;
   } else {
     codeSnippet = `
 const Paper = new PaperEmbeddedWalletSdk({
     clientId: "YOUR_CLIENT_ID",
     chain: "Goerli"
 })
-const user = await Paper.initializeUser();
-if (user) {
+const user = await Paper.getUser();
+if (user.status !== UserStatus.LOGGED_OUT) {
     const userPaperWallet = user.wallet;
     
     // send gasless transactions to claim an NFT on Goerli
@@ -71,8 +41,7 @@ if (user) {
     // do native web3 ethers.js stuff
     const ethersJsSigner = await userPaperWallet.getEthersJsSigner()
     ethersJsSigner.sendTransaction({ ... })
-}
-    `;
+}`;
   }
 
   return (
