@@ -31,6 +31,15 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   };
 
   const [email, setEmail] = useState<string | null>(null);
+  const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
+  const [otpCode, setOtpCode] = useState<string | null>(null);
+  const [sendEmailOtpResult, setSendEmailOtpResult] = useState<
+    | {
+        success: boolean;
+        isNewUser: boolean;
+      }
+    | undefined
+  >(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const loginWithPaperEmailOtp = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -45,6 +54,49 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
       onLoginSuccess();
     } catch (e) {
       // use closed login modal.
+    }
+    setIsLoading(false);
+  };
+
+  const loginWithPaperEmailOtpHeadless = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      const result = await paper?.auth.sendPaperEmailLoginOtp({
+        email: email || "",
+      });
+      console.log("sendPaperEmailLoginOtp result", result);
+
+      setSendEmailOtpResult(result);
+    } catch (e) {
+      console.error(
+        "something went wrong sending otp email in headless flow",
+        e
+      );
+    }
+    setIsLoading(false);
+  };
+
+  const finishHeadlessOtpLogin = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      const result = await paper?.auth.verifyPaperEmailLoginOtp({
+        email: email || "",
+        otp: otpCode || "",
+        recoveryCode: sendEmailOtpResult?.isNewUser
+          ? undefined
+          : recoveryCode || "",
+      });
+      console.log("verifyPaperEmailLoginOtp result", result);
+
+      onLoginSuccess();
+    } catch (e) {
+      console.error("something went wrong verifying otp in headless flow", e);
     }
     setIsLoading(false);
   };
@@ -83,6 +135,86 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
             Login with Email OTP
           </Button>
         </Stack>
+
+        {/* Adding code to allow internal full headless flow */}
+        {(email?.endsWith("@withpaper.com") ?? false) && (
+          <>
+            <Flex my={4} alignItems="center">
+              <Divider />
+              <Text mx={4}>or</Text>
+              <Divider />
+            </Flex>
+            <Stack as="form">
+              {sendEmailOtpResult?.success ? (
+                <>
+                  <FormControl alignItems="end" as={Stack}>
+                    <Input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="Otp Code"
+                      value={otpCode || ""}
+                      onChange={(e) => {
+                        setOtpCode(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  {sendEmailOtpResult.isNewUser ? null : (
+                    <FormControl alignItems="end" as={Stack}>
+                      <Input
+                        type="password"
+                        placeholder="Recovery Code"
+                        value={recoveryCode || ""}
+                        onChange={(e) => {
+                          setRecoveryCode(e.target.value);
+                        }}
+                      />
+                    </FormControl>
+                  )}
+                  <Button
+                    type="submit"
+                    onClick={finishHeadlessOtpLogin}
+                    disabled={!email || !otpCode}
+                    isLoading={isLoading}
+                  >
+                    verify and finish headless login
+                  </Button>
+                  <Button
+                    variant={"ghost"}
+                    w="fit-content"
+                    onClick={() => {
+                      setOtpCode("");
+                      setRecoveryCode("");
+                      setSendEmailOtpResult(undefined);
+                    }}
+                  >
+                    Back
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <FormControl alignItems="end" as={Stack}>
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email || ""}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
+                    />
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    onClick={loginWithPaperEmailOtpHeadless}
+                    disabled={!email}
+                    isLoading={isLoading}
+                  >
+                    send headless Email OTP
+                  </Button>
+                </>
+              )}
+            </Stack>
+          </>
+        )}
       </CardBody>
     </Card>
   );
