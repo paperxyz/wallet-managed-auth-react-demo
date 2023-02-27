@@ -13,7 +13,6 @@ import {
   ContractCallInputType,
   InitializedUser,
 } from "@paperxyz/embedded-wallet-service-sdk";
-import { ethers } from "ethers";
 import { useState } from "react";
 
 interface Props {
@@ -62,40 +61,6 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
     });
     setLoading(null);
     console.log("signedMessage", signedMessage);
-  };
-
-  const signTransactionEth = async () => {
-    setLoading(Features.SIGN_T_ETH);
-    const signer = await wallet?.getEthersJsSigner({
-      rpcEndpoint: "mainnet",
-    });
-    const tx = {
-      to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
-      value: ethers.utils.parseEther("0.1"),
-    };
-    const signedTransactionEth = await signer?.signTransaction(tx);
-    onResult({
-      signedTransactionEth,
-    });
-    setLoading(null);
-    console.log("signedTransaction", signedTransactionEth);
-  };
-
-  const signTransactionGoerli = async () => {
-    setLoading(Features.SIGN_T_GOERLI);
-    const signer = await wallet?.getEthersJsSigner({
-      rpcEndpoint: "goerli",
-    });
-    const tx = {
-      to: "0x8ba1f109551bD432803012645Ac136ddd64DBA72",
-      value: ethers.utils.parseEther("0.1"),
-    };
-    const signedTransactionGoerli = await signer?.signTransaction(tx);
-    onResult({
-      signedTransactionGoerli,
-    });
-    setLoading(null);
-    console.log("signedTransaction", signedTransactionGoerli);
   };
 
   const callContractGasless = async () => {
@@ -160,38 +125,6 @@ export const WalletFeatures: React.FC<Props> = ({ user }) => {
             </Button>
             <Code borderRadius={8} p={4} width="full">
               {result?.signedMessage || (
-                <Text color="gray.500" fontStyle="italic" size="sm">
-                  {PLACEHOLDER}
-                </Text>
-              )}
-            </Code>
-          </Stack>
-          <Stack>
-            <Button
-              onClick={signTransactionEth}
-              colorScheme="blue"
-              isLoading={loading === Features.SIGN_T_ETH}
-            >
-              Sign Transaction (Eth)
-            </Button>
-            <Code borderRadius={8} p={4} width="full">
-              {result?.signedTransactionEth || (
-                <Text color="gray.500" fontStyle="italic" size="sm">
-                  {PLACEHOLDER}
-                </Text>
-              )}
-            </Code>
-          </Stack>
-          <Stack>
-            <Button
-              onClick={signTransactionGoerli}
-              colorScheme="blue"
-              isLoading={loading === Features.SIGN_T_GOERLI}
-            >
-              Sign Transaction (Goerli)
-            </Button>
-            <Code borderRadius={8} p={4} width="full">
-              {result?.signedTransactionGoerli || (
                 <Text color="gray.500" fontStyle="italic" size="sm">
                   {PLACEHOLDER}
                 </Text>

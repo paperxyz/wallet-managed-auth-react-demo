@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   FormControl,
+  FormErrorMessage,
   Heading,
   Input,
   Stack,
@@ -35,11 +36,12 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   const [otpCode, setOtpCode] = useState<string | null>(null);
   const [sendEmailOtpResult, setSendEmailOtpResult] = useState<
     | {
-        success: boolean;
         isNewUser: boolean;
       }
     | undefined
   >(undefined);
+  const [sendOtpErrorMessage, setSendOtpErrorMessage] = useState("");
+  const [verifyOtpErrorMessage, setVerifyOtpErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const loginWithPaperEmailOtp = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -68,11 +70,13 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
         email: email || "",
       });
       console.log("sendPaperEmailLoginOtp result", result);
-
       setSendEmailOtpResult(result);
     } catch (e) {
+      if (e instanceof Error) {
+        setSendOtpErrorMessage(`${e.message}. Please try again later.`);
+      }
       console.error(
-        "something went wrong sending otp email in headless flow",
+        "Something went wrong sending otp email in headless flow",
         e
       );
     }
@@ -96,6 +100,9 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
 
       onLoginSuccess();
     } catch (e) {
+      if (e instanceof Error) {
+        setVerifyOtpErrorMessage(`${e.message}. Please try again`);
+      }
       console.error("something went wrong verifying otp in headless flow", e);
     }
     setIsLoading(false);
@@ -116,7 +123,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
           <Divider />
         </Flex>
         <Stack as="form">
-          <FormControl alignItems="end" as={Stack}>
+          <FormControl as={Stack}>
             <Input
               type="email"
               placeholder="you@example.com"
@@ -145,9 +152,9 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
               <Divider />
             </Flex>
             <Stack as="form">
-              {sendEmailOtpResult?.success ? (
+              {sendEmailOtpResult ? (
                 <>
-                  <FormControl alignItems="end" as={Stack}>
+                  <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
                     <Input
                       type="text"
                       inputMode="decimal"
@@ -157,9 +164,15 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                         setOtpCode(e.target.value);
                       }}
                     />
+                    {!!verifyOtpErrorMessage &&
+                      sendEmailOtpResult.isNewUser && (
+                        <FormErrorMessage>
+                          {verifyOtpErrorMessage}
+                        </FormErrorMessage>
+                      )}
                   </FormControl>
                   {sendEmailOtpResult.isNewUser ? null : (
-                    <FormControl alignItems="end" as={Stack}>
+                    <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
                       <Input
                         type="password"
                         placeholder="Recovery Code"
@@ -168,6 +181,11 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                           setRecoveryCode(e.target.value);
                         }}
                       />
+                      {!!verifyOtpErrorMessage && (
+                        <FormErrorMessage>
+                          {verifyOtpErrorMessage}
+                        </FormErrorMessage>
+                      )}
                     </FormControl>
                   )}
                   <Button
@@ -177,6 +195,13 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                     isLoading={isLoading}
                   >
                     verify and finish headless login
+                  </Button>
+                  <Button
+                    onClick={loginWithPaperEmailOtpHeadless}
+                    variant="ghost"
+                    size="sm"
+                  >
+                    Request New Code
                   </Button>
                   <Button
                     variant={"ghost"}
@@ -192,7 +217,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                 </>
               ) : (
                 <>
-                  <FormControl alignItems="end" as={Stack}>
+                  <FormControl as={Stack} isInvalid={!!sendOtpErrorMessage}>
                     <Input
                       type="email"
                       placeholder="you@example.com"
@@ -201,6 +226,9 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                         setEmail(e.target.value);
                       }}
                     />
+                    {!!sendOtpErrorMessage && (
+                      <FormErrorMessage>{sendOtpErrorMessage}</FormErrorMessage>
+                    )}
                   </FormControl>
                   <Button
                     type="submit"
