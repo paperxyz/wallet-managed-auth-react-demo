@@ -9,7 +9,7 @@ import {
   Heading,
   Input,
   Stack,
-  Text,
+  Text
 } from "@chakra-ui/react";
 import { PaperEmbeddedWalletSdk } from "@paperxyz/embedded-wallet-service-sdk";
 import { useState } from "react";
@@ -37,6 +37,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
   const [sendEmailOtpResult, setSendEmailOtpResult] = useState<
     | {
         isNewUser: boolean;
+        isNewDevice: boolean;
       }
     | undefined
   >(undefined);
@@ -171,7 +172,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                         </FormErrorMessage>
                       )}
                   </FormControl>
-                  {sendEmailOtpResult.isNewUser ? null : (
+                  {sendEmailOtpResult.isNewDevice ? (
                     <FormControl as={Stack} isInvalid={!!verifyOtpErrorMessage}>
                       <Input
                         type="password"
@@ -187,7 +188,7 @@ export const Login: React.FC<Props> = ({ paper, onLoginSuccess }) => {
                         </FormErrorMessage>
                       )}
                     </FormControl>
-                  )}
+                  ) : null}
                   <Button
                     type="submit"
                     onClick={finishHeadlessOtpLogin}
