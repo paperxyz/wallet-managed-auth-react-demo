@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     const paper = new PaperEmbeddedWalletSdk({
-      clientId: "86969e30-86cc-4c5f-8c0f-294ecb14fcba",
+      clientId: "992d8417-9cd1-443c-bae3-f9eac1d64767",
       chain: "Mumbai",
     });
     setPaper(paper);
