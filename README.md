@@ -2,7 +2,7 @@
 
 Feel free to play around with a live deployment of this sample app [here](https://ews-demo.withpaper.com)
 
-Find the docs with more information [here](https://ews.withpaper.com/docs)
+Find the docs with more information [here](https://docs.withpaper.com/reference/embedded-wallet-service-overview)
 
 To run this app locally, clone this repo, run `npm install`, and `npm start`
 The rendered page should look like the following image:
